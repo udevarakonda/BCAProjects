@@ -639,6 +639,9 @@ class MyGame(arcade.Window):
         else:
             return "4th"
 
+    def player1_touchdown_text(self):
+        arcade.draw_text()
+
     def on_draw(self):
         """ Render the screen. """
 

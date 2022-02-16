@@ -12,18 +12,29 @@ python -m arcade.examples.sprite_move_keyboard_better
 """
 
 import arcade
+import random
 
 # File Paths for Player and Field Images; You can change them to what you want
-STARTING_MENU_IMAGE = "/Users/udbhav/Desktop/MidyearProjectFootball/source_code/FutbolImages/StartingMenuImage.jpg"
-CLOSING_MENU_IMAGE = "/Users/udbhav/Desktop/MidyearProjectFootball/source_code/FutbolImages/GameOverScreenImage.jpg"
+STARTING_MENU_IMAGE = "/Users/udbhav/Desktop/MidyearProjectFootball/source_code/FutbolImages/TestingRunningImages/StartingMenuImage.jpg"
+CLOSING_MENU_IMAGE = "/Users/udbhav/Desktop/MidyearProjectFootball/source_code/FutbolImages/TestingRunningImages/GameOverScreenImage.jpg"
 FIELD_IMAGE = ":resources:images/backgrounds/FootballBackgroundImage1.jpeg"
-PLAYER1_OPTION1 = "/Users/udbhav/Desktop/MidyearProjectFootball/source_code/FutbolImages/image4.png"
-PLAYER1_OPTION2 = "/Users/udbhav/Desktop/MidyearProjectFootball/source_code/FutbolImages/image5.png"
-PLAYER2_OPTION1 = "/Users/udbhav/Desktop/MidyearProjectFootball/source_code/FutbolImages/image1.png"
-PLAYER2_OPTION2 = "/Users/udbhav/Desktop/MidyearProjectFootball/source_code/FutbolImages/image2.png"
+PLAYER1_OPTION1 = "/Users/udbhav/Desktop/MidyearProjectFootball/source_code/FutbolImages/TestingRunningImages/image4.png"
+PLAYER1_OPTION2 = "/Users/udbhav/Desktop/MidyearProjectFootball/source_code/FutbolImages/TestingRunningImages/image5.png"
+PLAYER2_OPTION1 = "/Users/udbhav/Desktop/MidyearProjectFootball/source_code/FutbolImages/TestingRunningImages/image1.png"
+PLAYER2_OPTION2 = "/Users/udbhav/Desktop/MidyearProjectFootball/source_code/FutbolImages/TestingRunningImages/image2.png"
 
-player1_selected_option = ""
-player2_selected_option = ""
+# Image File Paths for Player Images
+BLF1 = "/Users/udbhav/Desktop/MidyearProjectFootball/source_code/FutbolImages/ActualRunningAnimationImages/Blue1.png"
+BLF2 = "/Users/udbhav/Desktop/MidyearProjectFootball/source_code/FutbolImages/ActualRunningAnimationImages/Blue2.png"
+BRF1 = "/Users/udbhav/Desktop/MidyearProjectFootball/source_code/FutbolImages/ActualRunningAnimationImages/BluePlayerAnimationFacingRightFrame1.png"
+BRF2 = "/Users/udbhav/Desktop/MidyearProjectFootball/source_code/FutbolImages/ActualRunningAnimationImages/BluePlayerAnimationFacingRightFrame2.png"
+RLF1 = "/Users/udbhav/Desktop/MidyearProjectFootball/source_code/FutbolImages/ActualRunningAnimationImages/RedPlayerAnimationFacingRightFrame1.png"
+RLF2 = "/Users/udbhav/Desktop/MidyearProjectFootball/source_code/FutbolImages/ActualRunningAnimationImages/Red2.png"
+RRF1 = "/Users/udbhav/Desktop/MidyearProjectFootball/source_code/FutbolImages/ActualRunningAnimationImages/Red1.png"
+RRF2 = "/Users/udbhav/Desktop/MidyearProjectFootball/source_code/FutbolImages/ActualRunningAnimationImages/RedPlayerAnimationFacingRightFrame2.png"
+
+player1_color = ""
+player2_color = ""
 
 # Keep track of who won
 winning_player = ""
@@ -35,19 +46,68 @@ SCREEN_WIDTH = 1600
 SCREEN_HEIGHT = 1000  # 617, 1000  height = width / 0.411333333333
 SCREEN_TITLE = "1v1 Football Run"
 
-FRAMES_PER_QUARTER = 420 #7200
+# Quarter Duration
+SECONDS_PER_QUARTER = 120
 
+FRAMES_PER_QUARTER = SECONDS_PER_QUARTER * 60
+
+# Fumble Chance
+FUMBLE_CHANCE = 2
+# Keep track of which direction they are facing
+LEFT_DIRECTION = 0
+RIGHT_DIRECTION = 1
+
+# Powerups
+SPEED_BOOST_AMOUNT = 50
 
 SPRITE_SCALING = SCREEN_HEIGHT/1000
 
-MOVEMENT_SPEED = 4 #2.5
-PIXELS_FOR_FIRST_DOWN = FIELD_WIDTH/(12.7118644068/2)
+MOVEMENT_SPEED = 4 #4 #2.5
+PIXELS_FOR_FIRST_DOWN = FIELD_WIDTH/(12.7118644068/1.5)
 TIME_BETWEEN_PLAYS = 200
 
 TEXTURE_LEFT = 0
 TEXTURE_RIGHT = 1
 
+def load_texture_pair(filename):
+    """
+    Load a texture pair, with the second image being a mirror image.
+    """
+    return [
+        arcade.load_texture(filename),
+        arcade.load_texture(filename, flipped_horizontally=True)
+    ]
+
 class Player(arcade.Sprite):
+
+    def __init__(self, color, direction, player_number):
+        super().__init__()
+        color == "red"
+        self.direction = direction
+        self.walk_textures = []
+
+        self.time_interval = 0
+        self.player_number = player_number
+        self.cur_texture = 0
+        self.scale = SPRITE_SCALING
+        if player_number == 1:
+            if color == "red":
+                main_file_name = "/Users/udbhav/Desktop/MidyearProjectFootball/source_code/FutbolImages/ActualRunningAnimationImages/Red"
+            else:
+                main_file_name = "/Users/udbhav/Desktop/MidyearProjectFootball/source_code/FutbolImages/ActualRunningAnimationImages/Blue"
+            for i in range(2):
+                texture = load_texture_pair(f"{main_file_name}{i+1}.png")
+                self.walk_textures.append(texture)
+            self.texture = self.walk_textures[0][direction]
+        else:
+            if color == "red":
+                main_file_name = "/Users/udbhav/Desktop/MidyearProjectFootball/source_code/FutbolImages/ActualRunningAnimationImages/Red"
+            else:
+                main_file_name = "/Users/udbhav/Desktop/MidyearProjectFootball/source_code/FutbolImages/ActualRunningAnimationImages/Blue"
+            for i in range(2):
+                texture = load_texture_pair(f"{main_file_name}{i+1}.png")
+                self.walk_textures.append(texture)
+            self.texture = self.walk_textures[0][direction]
 
     def update(self):
         """ Move the player """
@@ -66,6 +126,43 @@ class Player(arcade.Sprite):
             self.bottom = 0
         elif self.top > SCREEN_HEIGHT - 1:
             self.top = SCREEN_HEIGHT - 1
+
+        self.update_animation()
+
+    def update_animation(self):
+        if self.time_interval == 0:
+            self.time_interval = 10
+            if self.change_x < 0:
+                self.direction = LEFT_DIRECTION
+
+                self.cur_texture += 1
+                if self.cur_texture > 1:
+                    self.cur_texture = 0
+
+                self.texture = self.walk_textures[self.cur_texture][LEFT_DIRECTION]
+                return
+            if self.change_x > 0:
+                self.direction = RIGHT_DIRECTION
+
+                self.cur_texture += 1
+                if self.cur_texture > 1:
+                    self.cur_texture = 0
+
+                self.texture = self.walk_textures[self.cur_texture][RIGHT_DIRECTION]
+                return
+            if self.change_y != 0:
+                self.cur_texture += 1
+                if self.cur_texture > 1:
+                    self.cur_texture = 0
+                self.texture = self.walk_textures[self.cur_texture][self.direction]
+        else:
+            self.time_interval -= 1
+
+    def reset_animations(self):
+        if self.player_number == 1:
+            self.texture = self.walk_textures[0][0]
+        else:
+            self.texture = self.walk_textures[0][1]
 
 class ClosingMenu(arcade.View):
     def __init__(self):
@@ -137,37 +234,36 @@ class StartingMenu(arcade.View):
 
 
     def on_mouse_press(self, x, y, button, modifiers):
-        global player1_selected_option
-        global player2_selected_option
+        global player1_color
+        global player2_color
+        global player_selection_combo
         if 489 > x > 254 and 617 > y > 436:
-            player1_selected_option = PLAYER1_OPTION1
-            player2_selected_option = PLAYER2_OPTION1
+            player1_color = "blue"
+            player2_color = "red"
 
             game_view = GameView()
             game_view.setup()
             self.window.show_view(game_view)
 
         elif 489 > x > 254 and 407 > y > 226:
-            player1_selected_option = PLAYER1_OPTION2
-            player2_selected_option = PLAYER2_OPTION2
+            player1_color = "red"
+            player2_color = "blue"
 
             game_view = GameView()
             game_view.setup()
             self.window.show_view(game_view)
 
         elif 1395 > x > 1160 and 615 > y > 437:
-
-            player1_selected_option = PLAYER1_OPTION1
-            player2_selected_option = PLAYER2_OPTION1
+            player1_color = "red"
+            player2_color = "blue"
 
             game_view = GameView()
             game_view.setup()
             self.window.show_view(game_view)
 
         elif 1395 > x > 1160 and 410 > y > 228:
-
-            player1_selected_option = PLAYER1_OPTION2
-            player2_selected_option = PLAYER2_OPTION2
+            player1_color = "blue"
+            player2_color = "red"
 
             game_view = GameView()
             game_view.setup()
@@ -200,11 +296,19 @@ class GameView(arcade.View):
         # Variables that will hold sprite lists
         self.player_list = None
 
+        # For Tracking Player Speed
+        self.player1_movement_speed = MOVEMENT_SPEED
+        self.player2_movement_speed = MOVEMENT_SPEED
+
 
         # Set up the player info
         self.player_sprite = None
         self.player_sprite2 = None
         self.background = None
+
+        # Used for Animation
+        self.player1_current_frame = None
+        self.player2_current_frame = None
 
         # Make the scene
         self.scene = None
@@ -216,6 +320,14 @@ class GameView(arcade.View):
         self.time_marker = 0
         self.position_for_first_down = None
 
+        # Used for Touchdown Text and Turnover Text
+        self.did_player1_touchdown = False
+        self.did_player2_touchdown = False
+        self.is_there_turnover = False
+        self.is_there_fumble = False
+        self.is_player1_tackled = False
+        self.is_player2_tackled = False
+
         # Yards Left
         # Track the current state of what key is pressed
         self.left_pressed = False
@@ -226,13 +338,19 @@ class GameView(arcade.View):
         self.a_pressed = False
         self.s_pressed = False
         self.d_pressed = False
+        self.v_pressed = False
+        self.m_pressed = False
+
+        # Boost
+        self.player1_boost_left = SPEED_BOOST_AMOUNT
+        self.player2_boost_left = SPEED_BOOST_AMOUNT
 
         # Use Height and Width to track variables.
         self.left_end_of_endzone = int(FIELD_WIDTH / 34.8837209)
         self.right_end_of_endzone = int(FIELD_WIDTH - self.left_end_of_endzone)
         self.pixels_for_5_yards = int(FIELD_WIDTH / (12.7118644068 * 2))
-        self.player1_touchdown = self.left_end_of_endzone + PIXELS_FOR_FIRST_DOWN/2
-        self.player2_touchdown = self.right_end_of_endzone - PIXELS_FOR_FIRST_DOWN/2
+        self.player1_touchdown = self.left_end_of_endzone + PIXELS_FOR_FIRST_DOWN/1.5
+        self.player2_touchdown = self.right_end_of_endzone - PIXELS_FOR_FIRST_DOWN/1.5
         self.player2_pos_on_first_and_goal = [int(self.player1_touchdown - (FIELD_WIDTH / 500)), int(SCREEN_HEIGHT / 2)]
         self.player1_pos_on_first_and_goal = [int(self.player2_touchdown + (FIELD_WIDTH / 500)), int(SCREEN_HEIGHT / 2)]
 
@@ -277,10 +395,12 @@ class GameView(arcade.View):
         self.background = arcade.load_texture(":resources:images/backgrounds/FootballBackgroundImage1.jpeg")
 
         # Set up the player
-        self.player_sprite = Player(player1_selected_option,
-                                    SPRITE_SCALING)
-        self.player_sprite2 = Player(player2_selected_option,
-                                    SPRITE_SCALING)
+        self.player_sprite = Player(player1_color,
+                                    LEFT_DIRECTION, 1)
+        self.player1_current_frame = 1
+        self.player_sprite2 = Player(player2_color,
+                                    RIGHT_DIRECTION, 2)
+        self.player2_current_frame = 3
 
         self.player_list.append(self.player_sprite)
         self.player_list.append(self.player_sprite2)
@@ -309,9 +429,11 @@ class GameView(arcade.View):
         self.player_sprite.center_x = player1_x_coordinate
         self.player_sprite.center_y = int(SCREEN_HEIGHT / 2)
 
+
         # Check for touchdown
         if player1_x_coordinate <= self.player1_touchdown:
-            self.player1_score += 6
+            self.did_player1_touchdown = True
+            self.player1_score += 7
             self.player_turn = 1
             self.pixels_left = PIXELS_FOR_FIRST_DOWN
             self.setup()
@@ -343,6 +465,7 @@ class GameView(arcade.View):
                 self.player_turn = 1
                 self.down_number = 1
                 self.pixels_left = PIXELS_FOR_FIRST_DOWN
+                self.is_there_turnover = True
                 self.setup()
             else:
                 self.down_number += 1
@@ -362,7 +485,8 @@ class GameView(arcade.View):
 
         # Check for touchdown®
         if player2_x_coordinate >= self.player2_touchdown:
-            self.player2_score += 6
+            self.did_player2_touchdown = True
+            self.player2_score += 7
             self.player_turn = 0
             self.pixels_left = PIXELS_FOR_FIRST_DOWN
             self.setup()
@@ -392,6 +516,7 @@ class GameView(arcade.View):
                 self.player_turn = 0
                 self.down_number = 1
                 self.pixels_left = PIXELS_FOR_FIRST_DOWN
+                self.is_there_turnover = True
                 self.setup()
             else:
                 self.down_number += 1
@@ -402,6 +527,15 @@ class GameView(arcade.View):
                 self.player_sprite.center_y = int(SCREEN_HEIGHT / 2)
 
     def player1_turn(self):
+        if self.m_pressed:
+            self.player1_boost_left -= 1
+        if self.v_pressed:
+            self.player2_boost_left -= 1
+        random_num = random.randint(1,  2)
+        if (random_num == 2):
+            self.player1_movement_speed -= MOVEMENT_SPEED/300
+        if self.player1_movement_speed < 0:
+            self.player1_movement_speed = 0
         # Update the player
         self.player_list.update()
         self.frames_left_in_quarter -= 1
@@ -422,7 +556,8 @@ class GameView(arcade.View):
             # Create a delay in the game
             self.time_marker = TIME_BETWEEN_PLAYS
 
-            self.player1_score += 6
+            self.did_player1_touchdown = True
+            self.player1_score += 7
             self.player_turn = 1
             self.down_number = 1
             self.pixels_left = PIXELS_FOR_FIRST_DOWN
@@ -435,7 +570,16 @@ class GameView(arcade.View):
 
 
     def player2_turn(self):
-        # Update the player
+        if self.m_pressed:
+            self.player1_boost_left -= 1
+        if self.v_pressed:
+            self.player2_boost_left -= 1
+        random_num = random.randint(1, 2)
+        if (random_num == 2):
+            self.player2_movement_speed -= MOVEMENT_SPEED / 300
+        if self.player2_movement_speed < 0:
+            self.player2_movement_speed = 0
+
         self.player_list.update()
         self.frames_left_in_quarter -= 1
 
@@ -454,14 +598,15 @@ class GameView(arcade.View):
             # Create a delay in the game
             self.time_marker = TIME_BETWEEN_PLAYS
 
-            self.player2_score += 6
+            self.did_player2_touchdown = True
+            self.player2_score += 7
             self.player_turn = 0
             self.down_number = 1
             self.pixels_left = PIXELS_FOR_FIRST_DOWN
             self.setup()
 
         # If the player has been hit, and if so, if their y_coordinate are close enough for tackling to be possible
-        if is_hit is True and abs(self.player_sprite2.center_y - self.player_sprite.center_y) < int(SCREEN_HEIGHT/41.133333):
+        if is_hit is True and abs(self.player_sprite2.center_y - self.player_sprite.center_y) < self.pixels_for_5_yards/5:
             self.if_player2_tackled(player2_x_coordinate)
 
 
@@ -491,6 +636,8 @@ class GameView(arcade.View):
 
             self.camera.move_to(player_centered)
 
+
+
     def text_changer(self, num):
         if num == 1:
             return "1st"
@@ -501,12 +648,33 @@ class GameView(arcade.View):
         else:
             return "4th"
 
+    def player1_touchdown_text(self):
+        arcade.draw_text(
+            "Player1 Touchdown",
+            SCREEN_WIDTH/2,
+            SCREEN_HEIGHT-200,
+            arcade.csscolor.INDIANRED,
+            50,
+            anchor_x="center",
+            font_name="arial"
+        )
+
+    def player2_touchdown_text(self):
+        arcade.draw_text(
+            "Player2 Touchdown",
+            SCREEN_WIDTH/2,
+            SCREEN_HEIGHT-200,
+            arcade.csscolor.INDIANRED,
+            50,
+            anchor_x="center",
+            font_name= "arial"
+        )
+
     def time_calculator(self):
         seconds = self.frames_left_in_quarter / 60
         minutes = int(seconds / 60)
         seconds = int(seconds % 60)
         return f"{minutes}:{seconds}"
-
     def on_draw(self):
         """ Render the screen. """
 
@@ -540,7 +708,7 @@ class GameView(arcade.View):
         if (self.pixels_left < PIXELS_FOR_FIRST_DOWN/10):
             yards_left = "inches"
         else:
-            yards_left = int(self.pixels_left / (PIXELS_FOR_FIRST_DOWN / 20))
+            yards_left = int(self.pixels_left / (PIXELS_FOR_FIRST_DOWN / 15))
         down_text = f"{self.text_changer(self.down_number)} & {yards_left}"
         arcade.draw_text(
             down_text,
@@ -549,7 +717,7 @@ class GameView(arcade.View):
             arcade.csscolor.WHITE,
             18
         )
-        player_turn_text = f"Player {self.player_turn + 1} turn"
+        player_turn_text = f"Player {self.player_turn + 1} Posession"
         arcade.draw_text(
             player_turn_text,
             300,
@@ -565,10 +733,49 @@ class GameView(arcade.View):
             arcade.csscolor.WHITE,
             18
         )
+        player1_boost_left = self.player1_boost_left
+        player2_boost_left = self.player2_boost_left
+        if player1_boost_left < 0:
+            player1_boost_left = 0
+        if player2_boost_left < 0:
+            player2_boost_left = 0
+        boost_text = f"Player1 Boost: {player1_boost_left}        Player2 Boost: {player2_boost_left}"
+        arcade.draw_text(
+            boost_text,
+            900,
+            SCREEN_HEIGHT - 20,
+            arcade.csscolor.WHITE,
+            18
+        )
+        if self.did_player1_touchdown:
+            self.player1_touchdown_text()
+        elif self.did_player2_touchdown:
+            self.player2_touchdown_text()
+        elif self.is_there_turnover:
+            self.turnover_text()
+        if self.is_there_fumble:
+            self.print_if_fumble()
+
+        if self.time_marker > 150:
+            self.print_time_delay("3...")
+        elif self.time_marker > 100:
+            self.print_time_delay("2...")
+        elif self.time_marker > 50:
+            self.print_time_delay("1...")
+        elif self.time_marker > 0:
+            self.print_time_delay("Go!")
 
     # def on_mouse_motion(self, x: float, y: float, dx: float, dy: float):
     #     print(str(x) + " " + str(y))
 
+    def turnover_text(self):
+        arcade.draw_text(
+            "Turnover",
+            600,
+            SCREEN_HEIGHT - 300,
+            arcade.csscolor.AQUAMARINE,
+            50
+        )
 
     def update_player_speed(self):
 
@@ -588,38 +795,54 @@ class GameView(arcade.View):
 
         if self.up_pressed and not self.down_pressed:
 
-            self.player_sprite.change_y = MOVEMENT_SPEED
+            self.player_sprite.change_y = self.player1_movement_speed
 
         elif self.down_pressed and not self.up_pressed:
 
-            self.player_sprite.change_y = -MOVEMENT_SPEED
+            self.player_sprite.change_y = -self.player1_movement_speed
 
         if self.left_pressed and not self.right_pressed:
 
-            self.player_sprite.change_x = -MOVEMENT_SPEED
+            self.player_sprite.change_x = -self.player1_movement_speed
 
         elif self.right_pressed and not self.left_pressed:
 
-            self.player_sprite.change_x = MOVEMENT_SPEED
+            self.player_sprite.change_x = self.player1_movement_speed
 
         if self.w_pressed and not self.s_pressed:
 
-            self.player_sprite2.change_y = MOVEMENT_SPEED
+            self.player_sprite2.change_y = self.player2_movement_speed
 
         elif self.s_pressed and not self.w_pressed:
 
-            self.player_sprite2.change_y = -MOVEMENT_SPEED
+            self.player_sprite2.change_y = -self.player2_movement_speed
 
         if self.a_pressed and not self.d_pressed:
 
-            self.player_sprite2.change_x = -MOVEMENT_SPEED
+            self.player_sprite2.change_x = -self.player2_movement_speed
 
         elif self.d_pressed and not self.a_pressed:
 
-            self.player_sprite2.change_x = MOVEMENT_SPEED
+            self.player_sprite2.change_x = self.player2_movement_speed
+
+        if self.m_pressed and self.player_sprite.change_x > 0 and (self.player1_boost_left > 0):
+
+            self.player_sprite.change_x = MOVEMENT_SPEED * 2
+
+        elif self.m_pressed and self.player_sprite.change_x < 0 and (self.player1_boost_left > 0):
+
+            self.player_sprite.change_x = -MOVEMENT_SPEED * 2
+
+        if self.v_pressed and self.player_sprite2.change_x > 0 and (self.player2_boost_left > 0):
+
+            self.player_sprite2.change_x = MOVEMENT_SPEED * 2
+
+        elif self.v_pressed and self.player_sprite2.change_x < 0 and (self.player2_boost_left > 0):
+
+            self.player_sprite2.change_x = -MOVEMENT_SPEED * 2
 
 
-    def on_update(self, delta_time):
+    def on_update(self, delta_time = 1/2):
         """ Movement and game logic """
 
         # Call update to move the sprite
@@ -640,14 +863,67 @@ class GameView(arcade.View):
                 self.frames_left_in_quarter = FRAMES_PER_QUARTER
 
         if self.time_marker != 0:
+
+            if self.player_turn == 0:
+                self.player1_movement_speed = MOVEMENT_SPEED - MOVEMENT_SPEED / 10
+                self.player2_movement_speed = MOVEMENT_SPEED
+            else:
+                self.player1_movement_speed = MOVEMENT_SPEED
+                self.player2_movement_speed = MOVEMENT_SPEED - MOVEMENT_SPEED / 10
             self.time_marker -= 1
+            self.player_sprite.reset_animations()
+            self.player_sprite2.reset_animations()
+
         elif self.player_turn == 0:
+            self.did_player1_touchdown = False
+            self.did_player2_touchdown = False
+            self.is_there_turnover = False
+            self.is_there_fumble = False
+            self.is_player1_tackled = False
+            self.is_player2_tackled = False
+
             self.player1_turn()
+
         else:
+            self.did_player1_touchdown = False
+            self.did_player2_touchdown = False
+            self.is_there_turnover = False
+            self.is_there_fumble = False
+            self.is_player1_tackled = False
+            self.is_player2_tackled = False
+
+
             self.player2_turn()
+
         self.center_camera_to_player()
 
+    def print_time_delay(self, text):
+        arcade.draw_text(
+            text,
+            SCREEN_WIDTH / 2,
+            SCREEN_HEIGHT - 700,
+            arcade.csscolor.CORNFLOWER_BLUE,
+            50,
+            anchor_x="center",
+            font_name="arial"
+        )
 
+    def print_if_fumble(self):
+        if self.player_turn == 0:
+            x_coordinate = self.player_sprite.center_x + 50
+            y_coordinate = self.player_sprite.center_y
+        else:
+            x_coordinate = self.player_sprite2.center_x + 50
+            y_coordinate = self.player_sprite2.center_y
+        arcade.draw_text(
+            "Fumble",
+            x_coordinate,
+            y_coordinate,
+            arcade.csscolor.CORNFLOWER_BLUE,
+            18,
+            anchor_x="center",
+            font_name="arial"
+        )
 
     def on_key_press(self, key, modifiers):
 
@@ -700,6 +976,18 @@ class GameView(arcade.View):
         elif key == arcade.key.D:
 
             self.d_pressed = True
+
+            self.update_player_speed()
+
+        elif key == arcade.key.V:
+
+            self.v_pressed = True
+
+            self.update_player_speed()
+
+        elif key == arcade.key.M:
+
+            self.m_pressed = True
 
             self.update_player_speed()
 
@@ -758,6 +1046,19 @@ class GameView(arcade.View):
             self.d_pressed = False
 
             self.update_player_speed()
+
+        elif key == arcade.key.V:
+
+            self.v_pressed = False
+
+            self.update_player_speed()
+
+        elif key == arcade.key.M:
+
+            self.m_pressed = False
+
+            self.update_player_speed()
+
 
 
 def main():
