@@ -15,23 +15,25 @@ import arcade
 import random
 
 # File Paths for Player and Field Images; You can change them to what you want
-STARTING_MENU_IMAGE = "/Users/udbhav/Desktop/MidyearProjectFootball/source_code/FutbolImages/TestingRunningImages/StartingMenuImage.jpg"
-CLOSING_MENU_IMAGE = "/Users/udbhav/Desktop/MidyearProjectFootball/source_code/FutbolImages/TestingRunningImages/GameOverScreenImage.jpg"
-FIELD_IMAGE = "/Users/udbhav/Desktop/MidyearProjectFootball/source_code/FutbolImages/FootballBackgroundImage1.jpeg"
-PLAYER1_OPTION1 = "/Users/udbhav/Desktop/MidyearProjectFootball/source_code/FutbolImages/TestingRunningImages/image4.png"
-PLAYER1_OPTION2 = "/Users/udbhav/Desktop/MidyearProjectFootball/source_code/FutbolImages/TestingRunningImages/image5.png"
-PLAYER2_OPTION1 = "/Users/udbhav/Desktop/MidyearProjectFootball/source_code/FutbolImages/TestingRunningImages/image1.png"
-PLAYER2_OPTION2 = "/Users/udbhav/Desktop/MidyearProjectFootball/source_code/FutbolImages/TestingRunningImages/image2.png"
+COMPUTER_PATH = "/Users/udbhav/Desktop/"
+
+STARTING_MENU_IMAGE = COMPUTER_PATH + "MidyearProjectFootball/source_code/FutbolImages/TestingRunningImages/StartingMenuImage.jpg"
+CLOSING_MENU_IMAGE = COMPUTER_PATH + "MidyearProjectFootball/source_code/FutbolImages/TestingRunningImages/GameOverScreenImage.jpg"
+FIELD_IMAGE = COMPUTER_PATH + "MidyearProjectFootball/source_code/FutbolImages/FootballBackgroundImage1.jpeg"
+PLAYER1_OPTION1 = COMPUTER_PATH + "MidyearProjectFootball/source_code/FutbolImages/TestingRunningImages/image4.png"
+PLAYER1_OPTION2 = COMPUTER_PATH + "MidyearProjectFootball/source_code/FutbolImages/TestingRunningImages/image5.png"
+PLAYER2_OPTION1 = COMPUTER_PATH + "MidyearProjectFootball/source_code/FutbolImages/TestingRunningImages/image1.png"
+PLAYER2_OPTION2 = COMPUTER_PATH + "MidyearProjectFootball/source_code/FutbolImages/TestingRunningImages/image2.png"
 
 # Image File Paths for Player Images
-BLF1 = "/Users/udbhav/Desktop/MidyearProjectFootball/source_code/FutbolImages/ActualRunningAnimationImages/Blue1.png"
-BLF2 = "/Users/udbhav/Desktop/MidyearProjectFootball/source_code/FutbolImages/ActualRunningAnimationImages/Blue2.png"
-BRF1 = "/Users/udbhav/Desktop/MidyearProjectFootball/source_code/FutbolImages/ActualRunningAnimationImages/BluePlayerAnimationFacingRightFrame1.png"
-BRF2 = "/Users/udbhav/Desktop/MidyearProjectFootball/source_code/FutbolImages/ActualRunningAnimationImages/BluePlayerAnimationFacingRightFrame2.png"
-RLF1 = "/Users/udbhav/Desktop/MidyearProjectFootball/source_code/FutbolImages/ActualRunningAnimationImages/RedPlayerAnimationFacingRightFrame1.png"
-RLF2 = "/Users/udbhav/Desktop/MidyearProjectFootball/source_code/FutbolImages/ActualRunningAnimationImages/Red2.png"
-RRF1 = "/Users/udbhav/Desktop/MidyearProjectFootball/source_code/FutbolImages/ActualRunningAnimationImages/Red1.png"
-RRF2 = "/Users/udbhav/Desktop/MidyearProjectFootball/source_code/FutbolImages/ActualRunningAnimationImages/RedPlayerAnimationFacingRightFrame2.png"
+BLF1 = COMPUTER_PATH + "MidyearProjectFootball/source_code/FutbolImages/ActualRunningAnimationImages/Blue1.png"
+BLF2 = COMPUTER_PATH + "MidyearProjectFootball/source_code/FutbolImages/ActualRunningAnimationImages/Blue2.png"
+BRF1 = COMPUTER_PATH + "MidyearProjectFootball/source_code/FutbolImages/ActualRunningAnimationImages/BluePlayerAnimationFacingRightFrame1.png"
+BRF2 = COMPUTER_PATH + "MidyearProjectFootball/source_code/FutbolImages/ActualRunningAnimationImages/BluePlayerAnimationFacingRightFrame2.png"
+RLF1 = COMPUTER_PATH + "MidyearProjectFootball/source_code/FutbolImages/ActualRunningAnimationImages/RedPlayerAnimationFacingRightFrame1.png"
+RLF2 = COMPUTER_PATH + "MidyearProjectFootball/source_code/FutbolImages/ActualRunningAnimationImages/Red2.png"
+RRF1 = COMPUTER_PATH + "MidyearProjectFootball/source_code/FutbolImages/ActualRunningAnimationImages/Red1.png"
+RRF2 = COMPUTER_PATH + "MidyearProjectFootball/source_code/FutbolImages/ActualRunningAnimationImages/RedPlayerAnimationFacingRightFrame2.png"
 
 player1_color = ""
 player2_color = ""
