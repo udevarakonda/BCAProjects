@@ -58,7 +58,7 @@ LEFT_DIRECTION = 0
 RIGHT_DIRECTION = 1
 
 # Powerups
-SPEED_BOOST_AMOUNT = 50
+SPEED_BOOST_DURATION = 60
 
 SPRITE_SCALING = SCREEN_HEIGHT/1000
 
@@ -328,6 +328,10 @@ class GameView(arcade.View):
         self.is_player1_tackled = False
         self.is_player2_tackled = False
 
+        # Keeping Track of non-boosting movement speed
+        self.player1_non_boosting_movement_speed = MOVEMENT_SPEED
+        self.player2_non_boosting_movement_speed = MOVEMENT_SPEED
+
         # Yards Left
         # Track the current state of what key is pressed
         self.left_pressed = False
@@ -342,8 +346,10 @@ class GameView(arcade.View):
         self.m_pressed = False
 
         # Boost
-        self.player1_boost_left = SPEED_BOOST_AMOUNT
-        self.player2_boost_left = SPEED_BOOST_AMOUNT
+        self.is_player1_boosting = False
+        self.is_player2_boosting = False
+        self.player1_boost_left = SPEED_BOOST_DURATION
+        self.player2_boost_left = SPEED_BOOST_DURATION
 
         # Use Height and Width to track variables.
         self.left_end_of_endzone = int(FIELD_WIDTH / 34.8837209)
@@ -432,6 +438,8 @@ class GameView(arcade.View):
 
         # Check for touchdown
         if player1_x_coordinate <= self.player1_touchdown:
+            self.player1_boost_left = SPEED_BOOST_DURATION
+            self.player2_boost_left = SPEED_BOOST_DURATION
             self.did_player1_touchdown = True
             self.player1_score += 7
             self.player_turn = 1
@@ -485,6 +493,8 @@ class GameView(arcade.View):
 
         # Check for touchdown®
         if player2_x_coordinate >= self.player2_touchdown:
+            self.player1_boost_left = SPEED_BOOST_DURATION
+            self.player2_boost_left = SPEED_BOOST_DURATION
             self.did_player2_touchdown = True
             self.player2_score += 7
             self.player_turn = 0
@@ -527,15 +537,19 @@ class GameView(arcade.View):
                 self.player_sprite.center_y = int(SCREEN_HEIGHT / 2)
 
     def player1_turn(self):
-        if self.m_pressed:
-            self.player1_boost_left -= 1
-        if self.v_pressed:
-            self.player2_boost_left -= 1
-        random_num = random.randint(1,  2)
-        if (random_num == 2):
+        random_num = random.randint(1, 2)
+        if random_num == 2:
+            self.player1_movement_speed = self.player1_non_boosting_movement_speed
             self.player1_movement_speed -= MOVEMENT_SPEED/300
-        if self.player1_movement_speed < 0:
+            self.player1_non_boosting_movement_speed = self.player1_movement_speed
+        else:
+            self.player1_movement_speed = self.player1_non_boosting_movement_speed
+
+        if self.player1_movement_speed <= 0:
             self.player1_movement_speed = 0
+            self.player1_non_boosting_movement_speed = self.player1_movement_speed
+
+
         # Update the player
         self.player_list.update()
         self.frames_left_in_quarter -= 1
@@ -556,6 +570,8 @@ class GameView(arcade.View):
             # Create a delay in the game
             self.time_marker = TIME_BETWEEN_PLAYS
 
+            self.player1_boost_left = SPEED_BOOST_DURATION
+            self.player2_boost_left = SPEED_BOOST_DURATION
             self.did_player1_touchdown = True
             self.player1_score += 7
             self.player_turn = 1
@@ -570,15 +586,17 @@ class GameView(arcade.View):
 
 
     def player2_turn(self):
-        if self.m_pressed:
-            self.player1_boost_left -= 1
-        if self.v_pressed:
-            self.player2_boost_left -= 1
         random_num = random.randint(1, 2)
-        if (random_num == 2):
+        if random_num == 2:
+            self.player2_movement_speed = self.player2_non_boosting_movement_speed
             self.player2_movement_speed -= MOVEMENT_SPEED / 300
-        if self.player2_movement_speed < 0:
+            self.player2_non_boosting_movement_speed = self.player2_movement_speed
+        else:
+            self.player2_movement_speed = self.player2_non_boosting_movement_speed
+
+        if self.player2_movement_speed <= 0:
             self.player2_movement_speed = 0
+            self.player2_non_boosting_movement_speed = self.player2_movement_speed
 
         self.player_list.update()
         self.frames_left_in_quarter -= 1
@@ -598,6 +616,8 @@ class GameView(arcade.View):
             # Create a delay in the game
             self.time_marker = TIME_BETWEEN_PLAYS
 
+            self.player1_boost_left = SPEED_BOOST_DURATION
+            self.player2_boost_left = SPEED_BOOST_DURATION
             self.did_player2_touchdown = True
             self.player2_score += 7
             self.player_turn = 0
@@ -733,20 +753,7 @@ class GameView(arcade.View):
             arcade.csscolor.WHITE,
             18
         )
-        player1_boost_left = self.player1_boost_left
-        player2_boost_left = self.player2_boost_left
-        if player1_boost_left < 0:
-            player1_boost_left = 0
-        if player2_boost_left < 0:
-            player2_boost_left = 0
-        boost_text = f"Player1 Boost: {player1_boost_left}        Player2 Boost: {player2_boost_left}"
-        arcade.draw_text(
-            boost_text,
-            900,
-            SCREEN_HEIGHT - 20,
-            arcade.csscolor.WHITE,
-            18
-        )
+
         if self.did_player1_touchdown:
             self.player1_touchdown_text()
         elif self.did_player2_touchdown:
@@ -825,25 +832,12 @@ class GameView(arcade.View):
 
             self.player_sprite2.change_x = self.player2_movement_speed
 
-        if self.m_pressed and self.player_sprite.change_x > 0 and (self.player1_boost_left > 0):
-
-            self.player_sprite.change_x = MOVEMENT_SPEED * 2
-
-        elif self.m_pressed and self.player_sprite.change_x < 0 and (self.player1_boost_left > 0):
-
-            self.player_sprite.change_x = -MOVEMENT_SPEED * 2
-
-        if self.v_pressed and self.player_sprite2.change_x > 0 and (self.player2_boost_left > 0):
-
-            self.player_sprite2.change_x = MOVEMENT_SPEED * 2
-
-        elif self.v_pressed and self.player_sprite2.change_x < 0 and (self.player2_boost_left > 0):
-
-            self.player_sprite2.change_x = -MOVEMENT_SPEED * 2
-
-
-    def on_update(self, delta_time = 1/2):
+    def on_update(self, delta_time = 1/60):
         """ Movement and game logic """
+        if self.player1_boost_left <= 0:
+            self.w_pressed = False
+        if self.player2_boost_left <= 0:
+            self.v_pressed = False
 
         # Call update to move the sprite
         # If using a physics engine, call update player to rely on physics engine
@@ -873,6 +867,8 @@ class GameView(arcade.View):
             self.time_marker -= 1
             self.player_sprite.reset_animations()
             self.player_sprite2.reset_animations()
+            self.is_player2_boosting = False
+            self.is_player1_boosting = False
 
         elif self.player_turn == 0:
             self.did_player1_touchdown = False
@@ -891,7 +887,6 @@ class GameView(arcade.View):
             self.is_there_fumble = False
             self.is_player1_tackled = False
             self.is_player2_tackled = False
-
 
             self.player2_turn()
 
@@ -930,65 +925,62 @@ class GameView(arcade.View):
         """Called whenever a key is pressed. """
 
 
-
         if key == arcade.key.UP:
 
             self.up_pressed = True
-
             self.update_player_speed()
+            return
 
         elif key == arcade.key.DOWN:
 
             self.down_pressed = True
-
             self.update_player_speed()
+            return
 
         elif key == arcade.key.LEFT:
 
             self.left_pressed = True
-
             self.update_player_speed()
+            return
 
         elif key == arcade.key.RIGHT:
 
             self.right_pressed = True
-
             self.update_player_speed()
+            return
 
         elif key == arcade.key.W:
 
             self.w_pressed = True
-
             self.update_player_speed()
+            return
 
         elif key == arcade.key.S:
 
             self.s_pressed = True
-
             self.update_player_speed()
+            return
 
         elif key == arcade.key.A:
 
             self.a_pressed = True
-
             self.update_player_speed()
+            return
 
         elif key == arcade.key.D:
 
             self.d_pressed = True
+            self.update_player_speed()
+            return
 
+        elif key == arcade.key.M:
+
+            self.m_pressed = True
             self.update_player_speed()
 
         elif key == arcade.key.V:
 
             self.v_pressed = True
-
-            self.update_player_speed()
-
-        elif key == arcade.key.M:
-
-            self.m_pressed = True
-
             self.update_player_speed()
 
 
@@ -1047,17 +1039,6 @@ class GameView(arcade.View):
 
             self.update_player_speed()
 
-        elif key == arcade.key.V:
-
-            self.v_pressed = False
-
-            self.update_player_speed()
-
-        elif key == arcade.key.M:
-
-            self.m_pressed = False
-
-            self.update_player_speed()
 
 
 
