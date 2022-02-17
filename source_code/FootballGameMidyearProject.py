@@ -17,7 +17,7 @@ import random
 # File Paths for Player and Field Images; You can change them to what you want
 STARTING_MENU_IMAGE = "/Users/udbhav/Desktop/MidyearProjectFootball/source_code/FutbolImages/TestingRunningImages/StartingMenuImage.jpg"
 CLOSING_MENU_IMAGE = "/Users/udbhav/Desktop/MidyearProjectFootball/source_code/FutbolImages/TestingRunningImages/GameOverScreenImage.jpg"
-FIELD_IMAGE = ":resources:images/backgrounds/FootballBackgroundImage1.jpeg"
+FIELD_IMAGE = "/Users/udbhav/Desktop/MidyearProjectFootball/source_code/FutbolImages/FootballBackgroundImage1.jpeg"
 PLAYER1_OPTION1 = "/Users/udbhav/Desktop/MidyearProjectFootball/source_code/FutbolImages/TestingRunningImages/image4.png"
 PLAYER1_OPTION2 = "/Users/udbhav/Desktop/MidyearProjectFootball/source_code/FutbolImages/TestingRunningImages/image5.png"
 PLAYER2_OPTION1 = "/Users/udbhav/Desktop/MidyearProjectFootball/source_code/FutbolImages/TestingRunningImages/image1.png"
@@ -398,7 +398,7 @@ class GameView(arcade.View):
         self.gui_camera = arcade.Camera(SCREEN_WIDTH, SCREEN_HEIGHT)
 
         # Set up the Background
-        self.background = arcade.load_texture(":resources:images/backgrounds/FootballBackgroundImage1.jpeg")
+        self.background = arcade.load_texture(FIELD_IMAGE)
 
         # Set up the player
         self.player_sprite = Player(player1_color,
@@ -539,11 +539,7 @@ class GameView(arcade.View):
     def player1_turn(self):
         random_num = random.randint(1, 2)
         if random_num == 2:
-            self.player1_movement_speed = self.player1_non_boosting_movement_speed
             self.player1_movement_speed -= MOVEMENT_SPEED/300
-            self.player1_non_boosting_movement_speed = self.player1_movement_speed
-        else:
-            self.player1_movement_speed = self.player1_non_boosting_movement_speed
 
         if self.player1_movement_speed <= 0:
             self.player1_movement_speed = 0
@@ -588,11 +584,7 @@ class GameView(arcade.View):
     def player2_turn(self):
         random_num = random.randint(1, 2)
         if random_num == 2:
-            self.player2_movement_speed = self.player2_non_boosting_movement_speed
             self.player2_movement_speed -= MOVEMENT_SPEED / 300
-            self.player2_non_boosting_movement_speed = self.player2_movement_speed
-        else:
-            self.player2_movement_speed = self.player2_non_boosting_movement_speed
 
         if self.player2_movement_speed <= 0:
             self.player2_movement_speed = 0
