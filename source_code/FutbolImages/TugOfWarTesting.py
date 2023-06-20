@@ -9,12 +9,12 @@ python -m arcade.examples.starting_template
 """
 import arcade
 
-SCREEN_WIDTH = 1500
-SCREEN_HEIGHT = 377
+SCREEN_WIDTH = 1594
+SCREEN_HEIGHT = 891
 SCREEN_TITLE = "Track Attack!"
 
-FIELD_WIDTH = 1500
-FIELD_HEIGHT = 377
+FIELD_WIDTH = 1594
+FIELD_HEIGHT = 891
 
 import arcade
 import random
@@ -32,7 +32,7 @@ SPRITE_SCALING = SCREEN_HEIGHT / 628
 
 WINNING_IMAGE = COMPUTER_PATH + "MidyearProjectFootball/source_code/FutbolImages/winscreen_trackAttack.png"
 CLOSING_MENU_IMAGE = COMPUTER_PATH + "MidyearProjectFootball/source_code/FutbolImages/endscreen_trackAttack.png"
-STARTING_MENU_IMAGE = COMPUTER_PATH + "MidyearProjectFootball/source_code/FutbolImages/StartingMenuImage.png"
+STARTING_MENU_IMAGE = COMPUTER_PATH + "MidyearProjectFootball/source_code/FutbolImages/TugOfWarImages/TugOfWarBackground.png"
 FIELD_IMAGE = COMPUTER_PATH + "MidyearProjectFootball/source_code/FutbolImages/TrackBackground.png"
 PLAYER1_OPTION1 = COMPUTER_PATH + "MidyearProjectFootball/source_code/FutbolImages/TestingRunningImages/image4.png"
 PLAYER1_OPTION2 = COMPUTER_PATH + "MidyearProjectFootball/source_code/FutbolImages/TestingRunningImages/image5.png"
@@ -191,9 +191,8 @@ class StartingMenu(arcade.View):
             game_view = Four_Hundred_Meter_Rules()
             self.window.show_view(game_view)
 
-    # def on_mouse_motion(self, x: float, y: float, dx: float, dy: float):
-    #     print(str(x) + " " + str(y))
-
+    def on_mouse_motion(self, x: float, y: float, dx: float, dy: float):
+        print(str(x) + " " + str(y))
 
 class WinningMenu(arcade.View):
     """ View to show when game is over """
