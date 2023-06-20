@@ -17,6 +17,9 @@ FIELD_WIDTH = 1594
 FIELD_HEIGHT = 891
 
 WINNER = None
+player1_rounds_won = 0
+player2_rounds_won = 0
+round_number = 1
 
 import arcade
 import random
@@ -189,17 +192,17 @@ class RulesMenu(arcade.View):
         """ Draw this view """
         self.window.clear()
 
-        arcade.draw_text("Tug O' War", self.window.width / 2, self.window.height - 60,
+        arcade.draw_text("Tug O' War", self.window.width / 2, self.window.height - 100,
                          arcade.color.WHITE, font_size=50, anchor_x="center")
 
-        arcade.draw_text("Press the correct letter to gain power", self.window.width / 2, self.window.height - 110,
-                         arcade.color.WHITE, font_size=12, anchor_x="center")
+        arcade.draw_text("Press the correct letter to gain power", self.window.width / 2, self.window.height - 300,
+                         arcade.color.WHITE, font_size=30, anchor_x="center")
 
-        arcade.draw_text("Pressing the wrong letter makes you lose power", self.window.width / 2, self.window.height - 210,
-                         arcade.color.WHITE, font_size=12, anchor_x="center")
+        arcade.draw_text("Pressing the wrong letter makes you lose power", self.window.width / 2, self.window.height - 500,
+                         arcade.color.WHITE, font_size=30, anchor_x="center")
 
-        arcade.draw_text("Drag the other team to the center line to win!", self.window.width / 2, self.window.height - 310,
-                         arcade.color.WHITE, font_size=12, anchor_x="center")
+        arcade.draw_text("Drag the other team to the center line to win!", self.window.width / 2, self.window.height - 700,
+                         arcade.color.WHITE, font_size=30, anchor_x="center")
 
     def on_mouse_press(self, x, y, button, modifiers):
         game_view = GameView()
@@ -388,6 +391,22 @@ class GameView(arcade.View):
         self.player2_list.append(self.player2_sprite5)
         self.scene.add_sprite("Player2", self.player2_sprite5)
 
+        # Rest Speeds
+        self.player1_sprite1.change_x = 0
+        self.player1_sprite2.change_x = 0
+        self.player1_sprite3.change_x = 0
+        self.player1_sprite4.change_x = 0
+        self.player1_sprite5.change_x = 0
+
+        self.player2_sprite1.change_x = 0
+        self.player2_sprite2.change_x = 0
+        self.player2_sprite3.change_x = 0
+        self.player2_sprite4.change_x = 0
+        self.player2_sprite5.change_x = 0
+
+        self.player1_power = 0
+        self.player2_power = 0
+
         # Rope
         self.rope = arcade.Sprite(ROPE_IMAGE, 1)
         self.scene.add_sprite("Rope", self.rope)
@@ -443,6 +462,9 @@ class GameView(arcade.View):
         """
         Render the screen.
         """
+        global round_number
+        global player1_rounds_won
+        global player2_rounds_won
 
         # Clear the screen
         self.window.clear()
@@ -460,7 +482,7 @@ class GameView(arcade.View):
         player2_current_letter = f"Player 2: Press {self.current_letter_player2}"
         arcade.draw_text(
             player1_current_letter,
-            350,
+            150,
             800,
             arcade.csscolor.BLACK,
             25
@@ -472,55 +494,34 @@ class GameView(arcade.View):
             arcade.csscolor.BLACK,
             25
         )
-
-        # # Distance Text
-        # global current_event_distance
-        # distance_text = f"{current_event_distance}m race"
-        # arcade.draw_text(
-        #     distance_text,
-        #     1300,
-        #     350,
-        #     arcade.csscolor.BLACK,
-        #     18,
-        # )
-        #
-        #
-        # # Level
-        # level_text = f"Level {self.level}"
-        # arcade.draw_text(
-        #     level_text,
-        #     10,
-        #     350,
-        #     arcade.csscolor.BLACK,
-        #     18,
-        # )
-        #
-        # timer_text = ""
-        # if self.timer > 0:
-        #     timer_text = f"{int(self.timer/60)}"
-        # else:
-        #     timer_text = ""
-        # arcade.draw_text(
-        #     timer_text,
-        #     FIELD_WIDTH / 2,
-        #     FIELD_HEIGHT / 2,
-        #     arcade.csscolor.BLACK,
-        #     50,
-        # )
-        #
-        # press_text = f"Press {self.current_letter}"
-        # arcade.draw_text(
-        #     press_text,
-        #     750,
-        #     350,
-        #     arcade.csscolor.BLACK,
-        #     18,
-        # )
+        round_number_text = f"Round {round_number}"
+        arcade.draw_text(
+            round_number_text,
+            731,
+            470,
+            arcade.csscolor.BLACK,
+            25
+        )
+        player1_rounds_won_text = f"Player1 Rounds Won: {player1_rounds_won}"
+        arcade.draw_text(
+            player1_rounds_won_text,
+            150,
+            420,
+            arcade.csscolor.BLACK,
+            25
+        )
+        player2_rounds_won_text = f"Player2 Rounds Won: {player2_rounds_won}"
+        arcade.draw_text(
+            player2_rounds_won_text,
+            1050,
+            420,
+            arcade.csscolor.BLACK,
+            25
+        )
 
     # def on_mouse_motion(self, x: float, y: float, dx: float, dy: float):
     #     print(str(x) + " " + str(y))
 
-    # def game_logic(self):
 
 
     def on_update(self, delta_time):
@@ -673,14 +674,28 @@ class GameView(arcade.View):
 
     def check_winner(self):
         global WINNER
+        global player2_rounds_won
+        global player1_rounds_won
+        global round_number
+
         if self.player1_sprite5.center_x > 812:
-            WINNER = "player2"
-            game_view = EndingScreen()
-            self.window.show_view(game_view)
+            if player2_rounds_won == 2:
+                WINNER = "player2"
+                game_view = EndingScreen()
+                self.window.show_view(game_view)
+            else:
+                player2_rounds_won += 1
+                round_number += 1
+                self.setup()
         elif self.player2_sprite1.center_x < 812:
-            WINNER = "player1"
-            game_view = EndingScreen()
-            self.window.show_view(game_view)
+            if player1_rounds_won == 2:
+                WINNER = "player1"
+                game_view = EndingScreen()
+                self.window.show_view(game_view)
+            else:
+                player1_rounds_won += 1
+                round_number += 1
+                self.setup()
 
     def on_mouse_press(self, x, y, button, key_modifiers):
         """
