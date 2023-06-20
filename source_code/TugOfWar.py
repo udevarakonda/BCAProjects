@@ -528,7 +528,7 @@ class GameView(arcade.View):
         arcade.draw_text(
             timer_text,
             774,
-            341,
+            360,
             arcade.csscolor.BLACK,
             50
         )
