@@ -230,6 +230,15 @@ class EndingScreen(arcade.View):
     def on_mouse_press(self, x: float, y: float, button: int, modifiers: int):
         if 701 > x > 128 and 442 > y > 262:
             # Play Again Button
+            global WINNER
+            global player1_rounds_won
+            global player2_rounds_won
+            global round_number
+
+            WINNER = None
+            player1_rounds_won = 0
+            player2_rounds_won = 0
+            round_number = 1
 
             game_view = StartingMenu()
             self.window.show_view(game_view)
@@ -313,7 +322,7 @@ class GameView(arcade.View):
 
 
         # Timer
-        self.stopwatch = 0
+        self.timer = 500
 
         # Interval
         self.interval = 0
@@ -411,7 +420,7 @@ class GameView(arcade.View):
         self.rope = arcade.Sprite(ROPE_IMAGE, 1)
         self.scene.add_sprite("Rope", self.rope)
 
-        self.timer = 180
+        self.timer = 300
 
         self.position_players()
 
@@ -451,12 +460,6 @@ class GameView(arcade.View):
         self.rope.center_x = 812
         self.rope.center_y = 235
 
-
-
-    def stopwatch_timer(self):
-        minutes = int(self.stopwatch / 30)
-        seconds = self.stopwatch - (minutes*30)
-        return f"{minutes}.{seconds}"
 
     def on_draw(self):
         """
@@ -518,6 +521,17 @@ class GameView(arcade.View):
             arcade.csscolor.BLACK,
             25
         )
+        if self.timer > 0:
+            timer_text = f"{int(self.timer / 60)}"
+        else:
+            timer_text = ""
+        arcade.draw_text(
+            timer_text,
+            774,
+            341,
+            arcade.csscolor.BLACK,
+            50
+        )
 
     # def on_mouse_motion(self, x: float, y: float, dx: float, dy: float):
     #     print(str(x) + " " + str(y))
@@ -532,8 +546,11 @@ class GameView(arcade.View):
         """
         self.check_winner()
 
-        self.player1_list.update()
-        self.player2_list.update()
+        if self.timer <= 0:
+            self.player1_list.update()
+            self.player2_list.update()
+        else:
+            self.timer -= 1
 
 
     def update_players(self):
@@ -570,92 +587,92 @@ class GameView(arcade.View):
         For a full list of keys, see:
         https://api.arcade.academy/en/latest/arcade.key.html
         """
+        if self.timer <= 0:
+            if key == arcade.key.Q:
+                if self.current_letter_player1 == "Q":
+                    self.player1_power += 0.5
+                else:
+                    self.player1_power -= 0.5
+                self.change_player1_letter()
+                self.update_players()
+            if key == arcade.key.W:
+                if self.current_letter_player1 == "W":
+                    self.player1_power += 0.5
+                else:
+                    self.player1_power -= 0.5
+                self.change_player1_letter()
+                self.update_players()
+            if key == arcade.key.A:
+                if self.current_letter_player1 == "A":
+                    self.player1_power += 0.5
+                else:
+                    self.player1_power -= 0.5
+                self.change_player1_letter()
+                self.update_players()
+            if key == arcade.key.S:
+                if self.current_letter_player1 == "S":
+                    self.player1_power += 0.5
+                else:
+                    self.player1_power -= 0.5
+                self.change_player1_letter()
+                self.update_players()
+            if key == arcade.key.Z:
+                if self.current_letter_player1 == "Z":
+                    self.player1_power += 0.5
+                else:
+                    self.player1_power -= 0.5
+                self.change_player1_letter()
+                self.update_players()
+            if key == arcade.key.X:
+                if self.current_letter_player1 == "X":
+                    self.player1_power += 0.5
+                else:
+                    self.player1_power -= 0.5
+                self.change_player1_letter()
+                self.update_players()
 
-        if key == arcade.key.Q:
-            if self.current_letter_player1 == "Q":
-                self.player1_power += 0.5
-            else:
-                self.player1_power -= 0.5
-            self.change_player1_letter()
-            self.update_players()
-        if key == arcade.key.W:
-            if self.current_letter_player1 == "W":
-                self.player1_power += 0.5
-            else:
-                self.player1_power -= 0.5
-            self.change_player1_letter()
-            self.update_players()
-        if key == arcade.key.A:
-            if self.current_letter_player1 == "A":
-                self.player1_power += 0.5
-            else:
-                self.player1_power -= 0.5
-            self.change_player1_letter()
-            self.update_players()
-        if key == arcade.key.S:
-            if self.current_letter_player1 == "S":
-                self.player1_power += 0.5
-            else:
-                self.player1_power -= 0.5
-            self.change_player1_letter()
-            self.update_players()
-        if key == arcade.key.Z:
-            if self.current_letter_player1 == "Z":
-                self.player1_power += 0.5
-            else:
-                self.player1_power -= 0.5
-            self.change_player1_letter()
-            self.update_players()
-        if key == arcade.key.X:
-            if self.current_letter_player1 == "X":
-                self.player1_power += 0.5
-            else:
-                self.player1_power -= 0.5
-            self.change_player1_letter()
-            self.update_players()
-
-        if key == arcade.key.U:
-            if self.current_letter_player2 == "U":
-                self.player2_power += 0.5
-            else:
-                self.player2_power -= 0.5
-            self.change_player2_letter()
-            self.update_players()
-        if key == arcade.key.I:
-            if self.current_letter_player2 == "I":
-                self.player2_power += 0.5
-            else:
-                self.player2_power -= 0.5
-            self.change_player2_letter()
-            self.update_players()
-        if key == arcade.key.J:
-            if self.current_letter_player2 == "J":
-                self.player2_power += 0.5
-            else:
-                self.player2_power -= 0.5
-            self.change_player2_letter()
-            self.update_players()
-        if key == arcade.key.K:
-            if self.current_letter_player2 == "K":
-                self.player2_power += 0.5
-            else:
-                self.player2_power -= 0.5
-            self.change_player2_letter()
-            self.update_players()
-        if key == arcade.key.N:
-            if self.current_letter_player2 == "N":
-                self.player2_power += 0.5
-            else:
-                self.player2_power -= 0.5
-            self.change_player2_letter()
-            self.update_players()
-        if key == arcade.key.M:
-            if self.current_letter_player2 == "M":
-                self.player2_power += 0.5
-            else:
-                self.player2_power -= 0.5
-            self.change_player2_letter()
-            self.update_players()
+            if key == arcade.key.U:
+                if self.current_letter_player2 == "U":
+                    self.player2_power += 0.5
+                else:
+                    self.player2_power -= 0.5
+                self.change_player2_letter()
+                self.update_players()
+            if key == arcade.key.I:
+                if self.current_letter_player2 == "I":
+                    self.player2_power += 0.5
+                else:
+                    self.player2_power -= 0.5
+                self.change_player2_letter()
+                self.update_players()
+            if key == arcade.key.J:
+                if self.current_letter_player2 == "J":
+                    self.player2_power += 0.5
+                else:
+                    self.player2_power -= 0.5
+                self.change_player2_letter()
+                self.update_players()
+            if key == arcade.key.K:
+                if self.current_letter_player2 == "K":
+                    self.player2_power += 0.5
+                else:
+                    self.player2_power -= 0.5
+                self.change_player2_letter()
+                self.update_players()
+            if key == arcade.key.N:
+                if self.current_letter_player2 == "N":
+                    self.player2_power += 0.5
+                else:
+                    self.player2_power -= 0.5
+                self.change_player2_letter()
+                self.update_players()
+            if key == arcade.key.M:
+                if self.current_letter_player2 == "M":
+                    self.player2_power += 0.5
+                else:
+                    self.player2_power -= 0.5
+                self.change_player2_letter()
+                self.update_players()
 
 
     def on_key_release(self, key, key_modifiers):
